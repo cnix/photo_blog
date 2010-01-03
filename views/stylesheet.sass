@@ -3,7 +3,7 @@ body, div, span, ul, li, p, h1, h2, h3, h4, h5, h6, dl, dd, dt, a
   :padding 0
 
 body
-  :background #000
+  :background #111
   :color #888
   :font-family helvetica, arial
   :margin 0
@@ -35,7 +35,7 @@ div#header
       :float left
       :margin-right 10px
       :padding-right 10px
-      :border-right solid 1px #000
+      :border-right solid 2px #000
     li:last-child
       :border-right none
   h1
@@ -75,13 +75,21 @@ div#about
     :margin 15px 0
 
 div.post
-  :margin 20px 100px
+  :margin 20px 100px 20px 160px
+  :padding 15px 30px
   :width 550px
+  :background #000
+  :-webkit-border-radius 10px
   h2
     :font
       :size 30px
       :weight 100
-    :margin-left -15px
+    :margin -15px 0 0 -160px
+    :padding 8px 0 8px 15px
+    :background #000
+    :-webkit-border-radius 10px
+    a
+      :text-decoration none
   p
     :margin 10px 0
   b
@@ -89,8 +97,10 @@ div.post
       :weight normal
       :size 18px
   a
-    :color #f8f8f8
+    :color #4D71A3
     :text-decoration underline
+  img
+    :margin-top -25px
 
 div.photo
   h2
