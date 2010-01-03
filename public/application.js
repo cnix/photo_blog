@@ -34,9 +34,10 @@ $(document).ready(function($) {
       function(data) {
         
         $.each(data.photoset.photo, function(i,item) {
+          permalink = item.title.toLowerCase().split(' ').join('/');
           static_photo_url = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '.jpg';
           photo_page_url = 'http://flickr.com/photos/seadated/' + item.id;
-          image_container = "<div class='post'><h2>" + item.title + "</h2>";
+          image_container = "<div class='post'><a href='/" + permalink + "'><h2>" + item.title + "</h2></a>";
           image_container += "<a href='" + photo_page_url + "'>";
           image_container += "<img src=\"" + static_photo_url + "\" /></a></div>";
           $("#index").prepend(image_container);
