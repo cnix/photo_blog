@@ -45,8 +45,9 @@ $(document).ready(function($) {
               permalink = item.title.toLowerCase().split(' ').join('/');
               static_photo_url = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '.jpg';
               photo_page_url = 'http://flickr.com/photos/seadated/' + item.id;
+              post_id = item.title.split(' ')[1];
 
-              image_container = "<div class='post'><h2><a href='/" + permalink + "'>" + item.title + "</a></h2>";
+              image_container = "<div class='post' id='" + post_id + "'><h2><a href='/" + permalink + "'>" + item.title + "</a></h2>";
               image_container += "<a href='" + photo_page_url + "'>";
               image_container += "<img src=\"" + static_photo_url + "\" /></a><p>";
               image_container += data.photo.description._content.split("\n").join("</p><p>");;
