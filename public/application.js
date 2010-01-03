@@ -39,7 +39,7 @@ $(document).ready(function($) {
           image_container = "<div class='post'><h2>" + item.title + "</h2>";
           image_container += "<a href='" + photo_page_url + "'>";
           image_container += "<img src=\"" + static_photo_url + "\" /></a></div>";
-          $("#index").append(image_container);
+          $("#index").prepend(image_container);
         })
       }
     )
