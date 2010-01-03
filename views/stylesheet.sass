@@ -5,7 +5,7 @@ body, div, span, ul, li, p, h1, h2, h3, h4, h5, h6, dl, dd, dt, a
 body
   :background #000
   :color #888
-  :font-family helvetica
+  :font-family helvetica, arial
   :margin 0
   :padding 0
 
@@ -15,19 +15,35 @@ a
 a:hover
   :text-decoration underline
 
+h2
+  :font
+    :size 26px
+    :weight 100
+  :margin 15px
+
 div#header
   :width 1200px
   :background #111
   :margin auto
   :height 40px
+  :overflow auto
   ul
     :list-style none
-    :padding 10px 0 0 20px
+    :padding 20px 20px 0 20px
+    :float right
     li
       :float left
       :margin-right 10px
       :padding-right 10px
       :border-right solid 1px #000
+    li:last-child
+      :border-right none
+  h1
+    :font
+      :size 30px
+      :weight 100
+    :float left
+    :margin 4px 5px 5px 10px
 
 div#content
   :width 1200px
@@ -46,26 +62,35 @@ div#footer
 div#index
   :width 1024px
 
+div#about
+  :width 1024px
+  :height 500px
+  :margin auto
+  :margin-bottom 30px
+  h2
+    :margin-left -20px
+  ul
+    :margin-left 25px
+  p
+    :margin 15px 0
+
 div.post
   :margin 20px 100px
   h2
     :font
-      :size 40px
-      :family 'Palatino Linotype', 'Book Antiqua'
+      :size 30px
       :weight 100
     :margin-left -15px
-    :text-decoration underline
 
 div.photo
   h2
-    :font
-      :size 40px
-      :family 'Palatino Linotype', 'Book Antiqua'
-      :weight 100
-    :margin 15px 0
     :text-align center
     :text-decoration underline
 
 div#image
   :width 1024px
   :margin auto
+  
+a.profile_image
+  :float right
+  :margin 0 20px 20px 20px

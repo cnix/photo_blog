@@ -16,6 +16,10 @@ get '/day/:number' do
   haml :permalink
 end
 
+get '/about' do
+  haml :about
+end
+
 get '/stylesheet.css' do
   headers 'Content-Type' => 'text/css; charset=utf-8'
   sass :stylesheet
