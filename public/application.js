@@ -1,4 +1,74 @@
 (function($) {
+  
+  // core extensions
+  $.extend({
+    // determines if an object is empty
+    // $.isEmpty({})             // => true
+    // $.isEmpty({user: 'rph'})  // => false
+    isEmpty: function(obj) {
+      for (var i in obj) { return false }
+      return true
+    }
+  })
+  
+  $.flickr = {
+    url: function(method,params) {
+      return 'http://api.flickr.com/services/rest/?method=' + method + '&format=json' +
+        '&api_key=' + $.flickr.settings.api_key + ($.isEmpty(params) ? '' : '&' + $.param(params)) + '&jsoncallback=?'      
+    },
+  }
+  
+  $.flickr.photos = function(method, options) {
+    var options = $.extend($.flickr.settings, options || {}),
+        elements = $.flickr.self, photos
+
+    return elements.each(function() {
+      $.getJSON($.flickr.url(method, options), function(data) {
+        photos = (data.photos === undefined ? data.photoset : data.photos)
+        // elements.append($.flickr.thumbnail.process(photos))
+      })
+    })
+  }
+  
+  $.flickr.paginate = function(options) {
+    var last = $(this).flickr().photosetsGetPhotos({photoset_id:'72157622994576777'});
+    alert('last = '+last);
+    var start = $.flickr.paginate.numerify(options.start);
+    var prev = (start-1);
+    var next = (start+1);
+    $(options.up).attr('href','/day/'+next);
+    $(options.down).attr('href','/day/'+prev);
+  }
+  
+  $.flickr.paginate.numerify = function(potd_id) {
+    var arr = potd_id.split('day');
+    id = arr[1] * 1;
+    return id;
+  }
+  
+  // namespace to hold available API methods
+  // note: options available to each method match that of Flickr's docs
+  $.flickr.methods = {
+    // http://www.flickr.com/services/api/flickr.photos.getRecent.html
+    photosGetRecent: function(options) {
+      $.flickr.photos('flickr.photos.getRecent', options)
+    },
+    // http://www.flickr.com/services/api/flickr.photos.getContactsPublicPhotos.html
+    photosGetContactsPublicPhotos: function(options) {
+      $.flickr.photos('flickr.photos.getContactsPublicPhotos', options)
+    },
+    // http://www.flickr.com/services/api/flickr.photos.search.html
+    photosSearch: function(options) {
+      $.flickr.photos('flickr.photos.search', options)
+    },
+    // http://www.flickr.com/services/api/flickr.photosets.getPhotos.html
+    photosetsGetPhotos: function(options) {
+      $.flickr.photos('flickr.photosets.getPhotos', options)
+    },
+    photosGetInfo: function(options) {
+      $flickr.photos('flickr.photos.getInfo', options)
+    }
+  }
 
   $.fn.flickr_load = function(settings,callback) {
     var defaults = {
@@ -17,7 +87,6 @@
       var method = o.method;
       var extras = "&extras=" + o.extras;
       var regex = new RegExp(o.potd_id);
-      var fail = undefined;
       var request = base_url + method + o.api_key + o.set_id + extras + o.format;
       
       $.getJSON(request,
@@ -67,15 +136,39 @@
      $('<p>Something went wrong</p>').appendTo(container); 
     }
   }
+  
+  $.fn.paginate = function() {
+    var self = $(this);
+    // if (self.attr('class')=='page_down') {
+    //   
+    // };
+    switch(self.attr('class')) {
+     case 'page_down' : return 'down'
+     case 'page_up'   : return 'up' 
+    }
+      
+  }
+  
+  // the plugin
+  $.fn.flickr = function(options) {
+    $.flickr.self = $(this)
+    
+    // base configuration
+    $.flickr.settings = $.extend({
+      api_key: '9c9a2608064330707e0efd8b6816510b'
+    }, options || {})
+    
+    return $.flickr.methods
+  }
 
 })(jQuery);
 
 jQuery(document).ready(function($) {
 
+  var potd_id = 'day' + $('div#content > div.photo:first-child').attr('id');
+  
   // Display single large result for daily view
   if ( $('.photo').length ) {
-    
-    var potd_id = 'day' + $('div#content > div.photo:first-child').attr('id');
     
     $("#image").flickr_load({ 
       method: 'flickr.photosets.getPhotos',
@@ -94,5 +187,11 @@ jQuery(document).ready(function($) {
     })
 
   };
+  
+  $.flickr.paginate({
+    up: '.up',
+    down: '.down',
+    start: potd_id
+  })
 
 })
