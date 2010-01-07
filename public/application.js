@@ -17,28 +17,25 @@
       var method = o.method;
       var extras = "&extras=" + o.extras;
       var regex = new RegExp(o.potd_id);
+      var fail = undefined;
       var request = base_url + method + o.api_key + o.set_id + extras + o.format;
       
       $.getJSON(request,
         function(data) {
-          
-          $.each(data.photoset.photo, function(i,item) {
+          for (var i=0; i < data.photoset.photo.length; i++) {
             if (o.potd_id) {
-              if (regex.test(item.tags)) {
-                photo = item;
-              };
+              if (regex.test(data.photoset.photo[i].tags)) {
+                photo = data.photoset.photo[i];
+                build_markup(photo,container);
+                break;              
+              } else {
+                continue;              
+              }
             } else {
-              photo = item;
-            };
-          build_markup(photo,container);
-          })            
-
-          // var static_photo_url = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_b.jpg';
-          // var photo_page_url = 'http://flickr.com/photos/seadated/' + photo.id;
-          // var image_container = "<h2>" + photo.title + "</h2>"
-          // image_container += "<a href='" + photo_page_url + "'>";
-          // image_container += "<img src=\"" + static_photo_url + "\" /></a>";
-          // $(image_container).appendTo(container);
+              photo = data.photoset.photo[i];
+              build_markup(photo,container);
+            }
+          };
           
         }
       )
@@ -47,18 +44,35 @@
   }
   
   function build_markup(photo,container) {
-    var static_photo_url = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_b.jpg';
-    var photo_page_url = 'http://flickr.com/photos/seadated/' + photo.id;
-    var image_container = "<h2>" + photo.title + "</h2>"
-    image_container += "<a href='" + photo_page_url + "'>";
-    image_container += "<img src=\"" + static_photo_url + "\" /></a>";
-    $(image_container).appendTo(container);
+    if (container.attr('id') == 'image') {
+      var static_photo_url = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_b.jpg';
+      var photo_page_url = 'http://flickr.com/photos/seadated/' + photo.id;
+      var image_container = "<h2>" + photo.title + "</h2>"
+      image_container += "<a href='" + photo_page_url + "'>";
+      image_container += "<img src=\"" + static_photo_url + "\" /></a>";
+      $(image_container).appendTo(container);
+    } else if (container.attr('id') == 'index') {
+      var permalink = photo.title.toLowerCase().split(' ').join('/');
+      var static_photo_url = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '.jpg';
+      var photo_page_url = 'http://flickr.com/photos/seadated/' + photo.id;
+      var post_id = photo.title.split(' ')[1];
+      var image_container = "<div class='post' id='" + post_id + "'><h2><a href='/" + permalink + "'>" + photo.title + "</a></h2>";
+      image_container += "<a href='" + photo_page_url + "'>";
+      image_container += "<img src=\"" + static_photo_url + "\" /></a><p>";
+      image_container += "</p></div>"
+      $(image_container).prependTo(container);
+      
+      // get_description(photo);
+    } else {
+     $('<p>Something went wrong</p>').appendTo(container); 
+    }
   }
-  
+
 })(jQuery);
 
 jQuery(document).ready(function($) {
 
+  // Display single large result for daily view
   if ( $('.photo').length ) {
     
     var potd_id = 'day' + $('div#content > div.photo:first-child').attr('id');
@@ -68,33 +82,10 @@ jQuery(document).ready(function($) {
       extras: 'tags',
       potd_id: potd_id
      });
-
-    // $.getJSON('http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=' + api_key + '&photoset_id=' + set_365_id + '&extras=tags&format=json&jsoncallback=?',
-    //   function (data) {
-    // 
-    //     $.each(data.photoset.photo, function(i,item) {
-    //       if (regex.test(item.tags)) {
-    //         photo = item;
-    //       };
-    //     })
-    //     $.getJSON('http://api.flickr.com/services/rest/?&method=flickr.photos.getInfo&api_key=' + api_key + '&photo_id=' + photo.id + '&format=json&jsoncallback=?',
-    //       function (data) {
-    //         description = data.photo.description._content.split("\n").join("</p><p>");
-    //         image_description = "<p>" + description + "</p>";
-    //         static_photo_url = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_b.jpg';
-    //         photo_page_url = 'http://flickr.com/photos/seadated/' + photo.id;
-    //         image_container = "<a href='" + photo_page_url + "'>";
-    //         image_container += "<img src=\"" + static_photo_url + "\" /></a>";
-    //         $("#image").append(image_container);
-    //         $("h2").append(photo.title);
-    //         $("#image").append(image_description);
-    //       }
-    //     )
-    //   }
-    // )
     
   };
   
+  // Display many results for index page
   if ( $('#index').length ) {
     
     $("#index").flickr_load({
@@ -102,31 +93,6 @@ jQuery(document).ready(function($) {
       per_page: '&per_page=5'
     })
 
-    // $.getJSON('http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=' + api_key + '&photoset_id=' + set_365_id + '&per_page=5&page=1&format=json&jsoncallback=?',
-    //   function(data) {
-    //     $.each(data.photoset.photo, function(i,item) {
-    // 
-    //       $.getJSON('http://api.flickr.com/services/rest/?&method=flickr.photos.getInfo&api_key=' + api_key + '&photo_id=' + item.id + '&format=json&jsoncallback=?',
-    //         function(data) {
-    //           permalink = item.title.toLowerCase().split(' ').join('/');
-    //           static_photo_url = 'http://farm' + item.farm + '.static.flickr.com/' + item.server + '/' + item.id + '_' + item.secret + '.jpg';
-    //           photo_page_url = 'http://flickr.com/photos/seadated/' + item.id;
-    //           post_id = item.title.split(' ')[1];
-    // 
-    //           image_container = "<div class='post' id='" + post_id + "'><h2><a href='/" + permalink + "'>" + item.title + "</a></h2>";
-    //           image_container += "<a href='" + photo_page_url + "'>";
-    //           image_container += "<img src=\"" + static_photo_url + "\" /></a><p>";
-    //           image_container += data.photo.description._content.split("\n").join("</p><p>");;
-    //           image_container += "</p></div>"
-    // 
-    //           $("#index").prepend(image_container);
-    //         }
-    //       );
-    //       
-    //     })
-    //   }
-    // )
-    
   };
 
 })
