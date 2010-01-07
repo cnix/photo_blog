@@ -30,7 +30,7 @@ b
 
 h1
   :color #000
-  :text-shadow 2px 2px 4px #333
+  :text-shadow 1px 1px 4px #888
   :font
     :size 40px
     :weight 200
@@ -134,12 +134,24 @@ div.photo
 
 div#image
   :width 1024px
+  :min-height 400px
   :margin auto
+  :clear both
   p
     :margin 10px 0
   img
     :display block
     :margin auto
+
+div#404
+  :margin 100px auto
+  :text-align center
+
+div#pagination
+  a.down
+    :float left
+  a.up
+    :float right
   
 a.profile_image
   :float right

@@ -31,8 +31,6 @@
   }
   
   $.flickr.paginate = function(options) {
-    var last = $(this).flickr().photosetsGetPhotos({photoset_id:'72157622994576777'});
-    alert('last = '+last);
     var start = $.flickr.paginate.numerify(options.start);
     var prev = (start-1);
     var next = (start+1);
@@ -97,6 +95,11 @@
                 photo = data.photoset.photo[i];
                 build_markup(photo,container);
                 break;              
+              } else if (o.potd_id.split('day')[1] > data.photoset.photo.length){
+                var countdown = (o.potd_id.split('day')[1] - data.photoset.photo.length);
+                (countdown < 2) ? countdown += ' day.' : countdown += ' days.';
+                $("<p style='margin:100px auto;text-align:center;font-size:30px'>Welcome to the future. This photo doesn't exist yet. Check back in " + countdown + "</p>").appendTo(container);
+                break;
               } else {
                 continue;              
               }
