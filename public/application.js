@@ -142,9 +142,7 @@
   
   $.fn.paginate = function() {
     var self = $(this);
-    // if (self.attr('class')=='page_down') {
-    //   
-    // };
+
     switch(self.attr('class')) {
      case 'page_down' : return 'down'
      case 'page_up'   : return 'up' 
